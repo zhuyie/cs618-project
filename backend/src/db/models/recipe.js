@@ -15,6 +15,7 @@ const recipeSchema = new Schema(
           'Image must be a valid URL pointing to an image file (jpg, jpeg, png, gif, or webp)',
       },
     },
+    likes: [{ type: String }], // Array of user IDs who liked the recipe
   },
   { timestamps: true },
 )

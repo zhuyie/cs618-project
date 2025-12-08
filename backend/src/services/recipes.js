@@ -42,3 +42,16 @@ export async function updateRecipe(
 export async function deleteRecipe(userId, recipeId) {
   return await Recipe.deleteOne({ _id: recipeId, author: userId })
 }
+
+export async function likeRecipe(userId, recipeId) {
+  const recipe = await Recipe.findById(recipeId)
+  if (!recipe) return null
+  const likeIndex = recipe.likes.indexOf(userId)
+  if (likeIndex > -1) {
+    recipe.likes.splice(likeIndex, 1)
+  } else {
+    recipe.likes.push(userId)
+  }
+  await recipe.save()
+  return recipe
+}

@@ -3,7 +3,8 @@ import { User } from './User.jsx'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { likeRecipe } from '../api/recipes.js'
-import jwtDecode from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
+
 export function Recipe({ title, ingredients, image, author, likes, _id }) {
   const [token] = useAuth()
   const queryClient = useQueryClient()
@@ -27,7 +28,13 @@ export function Recipe({ title, ingredients, image, author, likes, _id }) {
           </ul>
         </div>
       )}
-      {image && <img src={image} alt={title} style={{ maxWidth: '100%', maxHeight: '400px', height: 'auto' }} />}
+      {image && (
+        <img
+          src={image}
+          alt={title}
+          style={{ maxWidth: '100%', maxHeight: '400px', height: 'auto' }}
+        />
+      )}
       <div>
         Likes: {likes?.length || 0}
         {token && (

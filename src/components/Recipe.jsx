@@ -14,7 +14,7 @@ export function Recipe({ title, ingredients, image, author }) {
           </ul>
         </div>
       )}
-      {image && <div>Image URL: {image}</div>}
+      {image && <img src={image} alt={title} style={{ maxWidth: '100%', maxHeight: '400px', height: 'auto' }} />}
       {author && (
         <em>
           <br />

@@ -6,22 +6,21 @@ import { createRecipe } from '../api/recipes.js'
 export function CreateRecipe() {
   const [title, setTitle] = useState('')
   const [ingredientInput, setIngredientInput] = useState('')
-  const [ingredients, setIngredients] = useState([])
   const [image, setImage] = useState('')
   const [token] = useAuth()
 
   const queryClient = useQueryClient()
 
   const createRecipeMutation = useMutation({
-    mutationFn: () => createRecipe(token, { title, ingredients, image }),
+    mutationFn: () => {
+      const ingredients = ingredientInput
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line)
+      return createRecipe(token, { title, ingredients, image })
+    },
     onSuccess: () => queryClient.invalidateQueries(['recipes']),
   })
-  const handleAddIngredient = () => {
-    if (ingredientInput.trim()) {
-      setIngredients((prev) => [...prev, ingredientInput.trim()])
-      setIngredientInput('')
-    }
-  }
   const handleSubmit = (e) => {
     e.preventDefault()
     createRecipeMutation.mutate()
@@ -42,21 +41,14 @@ export function CreateRecipe() {
       <br />
       <div>
         <label htmlFor='create-ingredients'>Ingredients: </label>
-        <input
-          type='text'
+        <textarea
           id='ingredient-input'
-          placeholder='e.g., 2 cups flour'
+          placeholder='Enter ingredients, one per line (e.g.,&#10;2 cups flour&#10;1 cup sugar&#10;1 cup milk)'
           value={ingredientInput}
           onChange={(e) => setIngredientInput(e.target.value)}
+          rows={4}
+          style={{ width: '400px' }}
         />
-        <button type='button' id='add-ingredient' onClick={handleAddIngredient}>
-          Add Ingredient
-        </button>
-        <ul>
-          {ingredients.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
       </div>
       <br />
       <div>

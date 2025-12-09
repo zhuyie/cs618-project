@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import { User } from './User.jsx'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { likeRecipe } from '../api/recipes.js'
 import { jwtDecode } from 'jwt-decode'
 
-export function Recipe({ title, ingredients, image, author, likes, _id }) {
+export function Recipe({ title, ingredients, image, author, likes, _id, isClickable = false }) {
   const [token] = useAuth()
   const queryClient = useQueryClient()
   const userId = token ? jwtDecode(token).sub : null
@@ -17,7 +18,9 @@ export function Recipe({ title, ingredients, image, author, likes, _id }) {
   })
   return (
     <article>
-      <h3>{title}</h3>
+      <h3>
+        {isClickable ? <Link to={`/recipe/${_id}`}>{title}</Link> : title}
+      </h3>
       {ingredients && (
         <div>
           Ingredients:
@@ -63,4 +66,5 @@ Recipe.propTypes = {
   author: PropTypes.string,
   likes: PropTypes.arrayOf(PropTypes.string),
   _id: PropTypes.string.isRequired,
+  isClickable: PropTypes.bool,
 }

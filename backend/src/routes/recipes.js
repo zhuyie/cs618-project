@@ -39,7 +39,7 @@ export function recipeRoutes(app, io) {
     try {
       const recipe = await createRecipe(req.auth.sub, req.body)
       console.log(`new recipe created`)
-      io.emit('recipe.new', { id: recipe._id, title: recipe.title })
+      io.emit('recipe.new', { id: recipe._id, title: recipe.title, author: recipe.author })
       return res.json(recipe)
     } catch (err) {
       console.error('error creating recipe', err)

@@ -3,7 +3,8 @@ import { Recipe } from './pages/Recipe.jsx'
 import { RecipeDetail } from './pages/RecipeDetail.jsx'
 import { Signup } from './pages/Signup.jsx'
 import { Login } from './pages/Login.jsx'
-import { AuthContextProvider } from './contexts/AuthContext.jsx'
+import { AuthContextProvider, useAuth } from './contexts/AuthContext.jsx'
+import { jwtDecode } from 'jwt-decode'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -45,29 +46,45 @@ const router = createBrowserRouter([
   },
 ])
 
+// Component to handle notifications with auth filtering
+function NotificationListener() {
+  const [token] = useAuth()
+  const userId = token ? jwtDecode(token).sub : null
+
+  useEffect(() => {
+    const listener = (data) => {
+      if (data.author && data.author.toString() === userId) return // skip if creator
+
+      console.log('new recipe notification for', data.title)
+      toast(
+        <div>
+          <strong>New recipe:</strong> {data.title}
+          <br />
+          <button
+            onClick={() => {
+              toast.dismiss()
+              navigate(`/recipe/${data.id}`)
+            }}
+          >
+            View Recipe
+          </button>
+        </div>,
+        { autoClose: 5000 }
+      )
+    }
+
+    socket.on('recipe.new', listener)
+    return () => socket.off('recipe.new', listener)
+  }, [userId])
+
+  return null
+}
+
 socket.on('connect', () => {
   console.log('connected to socket.io as', socket.id)
 })
 socket.on('connect_error', (err) => {
   console.error('socket.io connect error:', err)
-})
-socket.on('recipe.new', (data) => {
-  console.log('new recipe created')
-  toast(
-    <div>
-      <strong>New recipe:</strong> {data.title}
-      <br />
-      <button
-        onClick={() => {
-          toast.dismiss()
-          navigate(`/recipe/${data.id}`)
-        }}
-      >
-        View Recipe
-      </button>
-    </div>,
-    { autoClose: 5000 },
-  )
 })
 
 export function App() {
@@ -75,6 +92,7 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
         <RouterProvider router={router} />
+        <NotificationListener />
         <ToastContainer />
       </AuthContextProvider>
     </QueryClientProvider>

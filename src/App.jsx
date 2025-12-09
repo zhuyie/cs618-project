@@ -57,7 +57,12 @@ socket.on('recipe.new', (data) => {
     <div>
       <strong>New recipe:</strong> {data.title}
       <br />
-      <button onClick={() => navigate(`/recipe/${data.id}`)}>
+      <button
+        onClick={() => {
+          toast.dismiss()
+          navigate(`/recipe/${data.id}`)
+        }}
+      >
         View Recipe
       </button>
     </div>,

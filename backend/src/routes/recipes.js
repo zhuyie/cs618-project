@@ -9,7 +9,7 @@ import {
 } from '../services/recipes.js'
 import { requireAuth } from '../middleware/jwt.js'
 
-export function recipeRoutes(app) {
+export function recipeRoutes(app, io) {
   app.get('/api/v1/recipes', async (req, res) => {
     const { sortBy, sortOrder, author } = req.query
     const options = { sortBy, sortOrder }
@@ -38,6 +38,7 @@ export function recipeRoutes(app) {
   app.post('/api/v1/recipes', requireAuth, async (req, res) => {
     try {
       const recipe = await createRecipe(req.auth.sub, req.body)
+      io.emit('recipe.new', { id: recipe._id, title: recipe.title })
       return res.json(recipe)
     } catch (err) {
       console.error('error creating recipe', err)

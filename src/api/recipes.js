@@ -6,6 +6,12 @@ export const getRecipes = async (queryParams) => {
   return await res.json()
 }
 
+export const getRecipeById = async (recipeId) => {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/recipes/${recipeId}`)
+  if (!res.ok) throw new Error('Recipe not found')
+  return await res.json()
+}
+
 export const createRecipe = async (token, recipe) => {
   const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/recipes`, {
     method: 'POST',

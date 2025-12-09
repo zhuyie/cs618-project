@@ -11,13 +11,6 @@ const app = express()
 app.use(bodyParser.json())
 app.use(cors())
 
-recipeRoutes(app)
-userRoutes(app)
-app.get('/', (req, res) => {
-  res.send('Hello from Express Nodemon!')
-})
-//export { app }
-
 const server = createServer(app)
 const io = new Server(server, {
   cors: {
@@ -25,4 +18,11 @@ const io = new Server(server, {
   },
 })
 handleSocket(io)
+
+app.get('/', (req, res) => {
+  res.send('Hello from Express Nodemon!')
+})
+recipeRoutes(app, io)
+userRoutes(app)
+
 export { server as app }

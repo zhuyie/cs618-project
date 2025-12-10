@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getRecipeById } from '../api/recipes.js'
 import { Recipe } from '../components/Recipe.jsx'
 import { Header } from '../components/Header.jsx'
+import { navigate } from '../navigationRef.js'
 
 export function RecipeDetail() {
   const { id } = useParams()
@@ -15,6 +16,7 @@ export function RecipeDetail() {
   return (
     <div style={{ padding: 8 }}>
       <Header />
+      <button onClick={() => navigate('/')}>Back to Home</button>
       <br />
       <hr />
       {recipeQuery.isLoading && <p>Loading...</p>}
